@@ -1,0 +1,34 @@
+Search by City: Allow users to search for weather in specific cities.
+Geolocation: Automatically fetch weather data based on the user’s location.
+Current Weather: Display temperature, humidity, wind speed, and weather conditions.
+Forecast: Provide a 7-day forecast with high/low temperatures and weather icons.
+Units: Toggle between Celsius and Fahrenheit.
+Favorites: Allow users to save favorite cities for quick access.
+Dark Mode: Add a toggle for light/dark theme.
+
+React: Core framework.
+Axios/Fetch: For API calls.
+React Hooks: useState, useEffect, and custom hooks for managing state.
+CSS or TailwindCSS: For styling.
+OpenWeatherMap API: Free and reliable weather data API.
+
+
+  {/*import React from "react";
+import {useWeather} from "./hooks/useWeather";
+import SearchCity from "./component/searchCity";
+import CurrentWeather from "./component/currentWeather";
+import Forecast from "./component/forecast";
+
+const App = () => {
+  const { currentWeather, forecast, fetchWeather } = useWeather();
+
+  return (
+    <div className="app">
+      <SearchCity onSearch={fetchWeather}/>
+      <CurrentWeather weather={currentWeather} />
+      <Forecast forecast={forecast} />
+    </div>
+  );
+};
+
+export default App; */}
