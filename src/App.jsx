@@ -99,7 +99,7 @@ const WeatherApp = () => {
                     :weather.weather[0].description === "heavy intensity rain" ? rain : '' // Default image
                 }
                 alt={weather.weather[0].description}
-                className="object-cover"
+                className="object-cover sm:flex-1"
                 style={{ width: '200px' }}/>
               )}
              {/*} <img src={sunimage} alt="" className="object-cover "  style={{width:'200px'}}/>*/}
