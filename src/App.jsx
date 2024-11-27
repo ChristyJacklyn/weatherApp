@@ -85,9 +85,12 @@ const WeatherApp = () => {
   
   return (
       <div className="bg-blue-900 flex flex-col  min-h-screen " >
-
-        <div className="flex justify-start items-center w-2/3">
-            <div className="">
+            <div className="animationtitile text-white text-center p-10">
+                  <h1 style={{fontSize:'40px', fontStyle:'italic', fontWeight:'bolder'}} className="">Weather App</h1>
+              </div>
+        <div className="flex flex-col lg:flex-row justify-center items-center ">
+            
+            <div className="flex-1 justify-center flex items-center">
               {weather && (
                 <img src={
                   weather.weather[0].description === "clear sky" ? sunimage
@@ -99,16 +102,13 @@ const WeatherApp = () => {
                     :weather.weather[0].description === "heavy intensity rain" ? rain : '' // Default image
                 }
                 alt={weather.weather[0].description}
-                className="object-cover sm:flex-1"
+                className="object-cover"
                 style={{ width: '200px' }}/>
               )}
              {/*} <img src={sunimage} alt="" className="object-cover "  style={{width:'200px'}}/>*/}
             </div>
 
-            <div className="animationtitile text-white lg:flex-1">
-                <h1 style={{fontSize:'30px', fontStyle:'italic', fontWeight:'bolder'}} className="">Weather App</h1>
-            </div>
-            
+         
               {weather &&(
                 <div className="p-5 items-center flex-1 ">
                       <h2 style={{fontSize:'30px',color:'lightblue'}}>{weather.name}</h2> 
@@ -122,8 +122,6 @@ const WeatherApp = () => {
                               : weather.weather[0].description === "few clouds" ? ("A few cloud with warm temperature!!!") 
                               : 'It is normal weather'
                             }
-
-                        
                       </p>
               
                   </div> 
