@@ -1,22 +1,3 @@
-  {/*import React from "react";
-import {useWeather} from "./hooks/useWeather";
-import SearchCity from "./component/searchCity";
-import CurrentWeather from "./component/currentWeather";
-import Forecast from "./component/forecast";
-
-const App = () => {
-  const { currentWeather, forecast, fetchWeather } = useWeather();
-
-  return (
-    <div className="app">
-      <SearchCity onSearch={fetchWeather}/>
-      <CurrentWeather weather={currentWeather} />
-      <Forecast forecast={forecast} />
-    </div>
-  );
-};
-
-export default App; */}
 
 
 
@@ -24,15 +5,37 @@ export default App; */}
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import sunimage from '/sun.png';
+import rain from './assets/rain.png';
+import clouds from './assets/clouds.png';
+import sunrain from './assets/sunrain.png';
+import graycloud from './assets/graycloud.png';
 
 // Your OpenWeatherMap API key
 const API_KEY = "391fa7134cd19e43ca4a8e51c7f22238"; // Replace with your API key
 
 const WeatherApp = () => {
-  const [city, setCity] = useState("London"); // Default city
+  const [city, setCity] = useState("Groningen"); // Default city
   const [weather, setWeather] = useState(null); // To store weather data
   const [error, setError] = useState(null); // To store errors
   const [isMobile, setIsMobile] = useState(false);
+
+  //user's location
+  const getuserCurrentLocation = () => {
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const {latitude,longitude} =position.coords;
+          fetchWeather(latitude,longitude);
+        }
+      );
+    } else{
+      setError('Geolocation is not supported by your browser.');
+    }
+  }
+  //fetch data on component mount
+  useEffect(() =>{
+    getuserCurrentLocation();
+  },[])
 
 // adjust to mobile design
   useEffect(() => {
@@ -82,19 +85,48 @@ const WeatherApp = () => {
   
   return (
       <div className="bg-blue-900 flex flex-col  min-h-screen " >
+
         <div className="flex justify-start items-center w-2/3">
             <div className="">
-              <img src={sunimage} alt="" className="object-cover "  style={{width:'200px'}}/>
+              {weather && (
+                <img src={
+                  weather.weather[0].description === "clear sky" ? sunimage
+                    : weather.weather[0].description === "moderate rain" ? sunrain
+                    : weather.weather[0].description === "light rain" ? sunrain
+                    : weather.weather[0].description === "cloudy" ? clouds 
+                    : weather.weather[0].description === "smoke" ? graycloud 
+                    : weather.weather[0].description === "few clouds" ? clouds 
+                    :weather.weather[0].description === "heavy intensity rain" ? rain : '' // Default image
+                }
+                alt={weather.weather[0].description}
+                className="object-cover"
+                style={{ width: '200px' }}/>
+              )}
+             {/*} <img src={sunimage} alt="" className="object-cover "  style={{width:'200px'}}/>*/}
             </div>
+
             <div className="animationtitile text-white lg:flex-1">
                 <h1 style={{fontSize:'30px', fontStyle:'italic', fontWeight:'bolder'}} className="">Weather App</h1>
             </div>
             
               {weather &&(
-                <div className="p-5 items-center flex-1">
-                  <h2 style={{fontSize:'20px',color:'lightblue'}}>{weather.name}</h2> 
-                  <p style={{fontSize:'50px',color:'lightblue'}}> {weather.main.temp}°C</p>
-              </div> 
+                <div className="p-5 items-center flex-1 ">
+                      <h2 style={{fontSize:'30px',color:'lightblue'}}>{weather.name}</h2> 
+                      <p style={{fontSize:'50px',color:'lightblue'}}> {weather.main.temp}°C</p>
+                      <p style={{fontSize:'20px',color:'lightblue'}}>        
+                           {weather.weather[0].description === "clear sky" ? ("It's a beautiful sunny day!") 
+                              : weather.weather[0].description === "moderate rainn" ? ("Don't forget your umbrella; it's drizzling outside.") 
+                              : weather.weather[0].description === "heavy intensity rain" ? ("It's heavy intensity rain. Stay dry!") 
+                              : weather.weather[0].description === "snow" ? ("It's snowing! Stay warm!") 
+                              : weather.weather[0].description === "smoke" ? ("Quite smokey and hot. Stay hydrated!") 
+                              : weather.weather[0].description === "few clouds" ? ("A few cloud with warm temperature!!!") 
+                              : 'It is normal weather'
+                            }
+
+                        
+                      </p>
+              
+                  </div> 
               )}  
         </div>
           <div className=" p-4 border-xl rounded-xl gap-3 w-full" style={isMobile ? mobileGridDesign : griddisplay}>
@@ -108,14 +140,14 @@ const WeatherApp = () => {
                           style={{fontSize:'30px', borderRadius:'10px',margin:'5px'}}
                           className="w-full"
                         /> <br/>
-                        <button onClick={() => fetchWeather(city)} style={{backgroundColor:'lightblue', padding:'5px', borderRadius:'10px',fontSize:'20px'}}> Search City Weather</button>
+                        <button onClick={() => fetchWeather(city)} style={{backgroundColor:'lightblue', padding:'10px', borderRadius:'10px',fontSize:'20px',fontWeight:'bold'}}> Search City Weather</button>
                   </div>
               <div>
             
                 {weather && (
-                  <div className="bg-red-100 rounded-xl p-5">
-                    <h2 style={{fontSize:'30px'}}>{weather.name}</h2> <img src={sunimage} alt="" className="" />
-                    <p>{weather.weather[0].description}</p>
+                  <div className="bg-red-100 rounded-xl p-5 space-y-3" style={{fontSize:'20px'}}>
+                    <h2 style={{fontSize:'30px',fontWeight:'bold'}}>{weather.name}</h2> 
+                    <p>{weather.weather[0].description }</p>
                     <p>Temperature: {weather.main.temp}°C</p>
                     <p>Humidity: {weather.main.humidity}%</p>
                     <p>Wind Speed: {weather.wind.speed} m/s</p>
