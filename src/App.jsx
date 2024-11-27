@@ -96,6 +96,7 @@ const WeatherApp = () => {
                   weather.weather[0].description === "clear sky" ? sunimage
                     : weather.weather[0].description === "moderate rain" ? sunrain
                     : weather.weather[0].description === "light rain" ? sunrain
+                    : weather.weather[0].description === "overcast clouds" ? clouds 
                     : weather.weather[0].description === "cloudy" ? clouds 
                     : weather.weather[0].description === "smoke" ? graycloud 
                     : weather.weather[0].description === "few clouds" ? clouds 
