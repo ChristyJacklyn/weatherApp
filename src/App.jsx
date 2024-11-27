@@ -98,6 +98,7 @@ const WeatherApp = () => {
                     : weather.weather[0].description === "light rain" ? sunrain
                     : weather.weather[0].description === "overcast clouds" ? graycloud
                     : weather.weather[0].description === "cloudy" ? clouds 
+                    : weather.weather[0].description === "broken clouds" ? clouds
                     : weather.weather[0].description === "smoke" ? graycloud 
                     : weather.weather[0].description === "few clouds" ? clouds 
                     :weather.weather[0].description === "heavy intensity rain" ? rain : '' // Default image
