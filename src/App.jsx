@@ -1,7 +1,5 @@
 
 
-
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import sunimage from '/sun.png';
@@ -14,24 +12,50 @@ import graycloud from './assets/graycloud.png';
 const API_KEY = "391fa7134cd19e43ca4a8e51c7f22238"; // Replace with your API key
 
 const WeatherApp = () => {
-  const [city, setCity] = useState("Groningen"); // Default city
+  const [city, setCity] = useState(""); // Default city
   const [weather, setWeather] = useState(null); // To store weather data
   const [error, setError] = useState(null); // To store errors
   const [isMobile, setIsMobile] = useState(false);
 
   //user's location
   const getuserCurrentLocation = () => {
-    if(navigator.geolocation){
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const {latitude,longitude} =position.coords;
-          fetchWeather(latitude,longitude);
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+  
+          try {
+            // Call a reverse geocoding API to get the city name
+            const response = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+            );
+  
+            if (!response.ok) {
+              throw new Error("Failed to fetch city name.");
+            }
+  
+            const data = await response.json();
+            const cityName = data.city || data.locality || "Unknown location";
+  
+            // Update the city state
+            setCity(cityName);
+  
+            // Optionally fetch weather data after updating the city
+            fetchWeather(latitude, longitude);
+          } catch (error) {
+            setError("Failed to fetch city name: " + error.message);
+          }
+        },
+        (err) => {
+          setError("Error getting location: " + err.message);
         }
       );
-    } else{
-      setError('Geolocation is not supported by your browser.');
+    } else {
+      setError("Geolocation is not supported by your browser.");
     }
-  }
+  };
+  
+
   //fetch data on component mount
   useEffect(() =>{
     getuserCurrentLocation();
@@ -46,8 +70,8 @@ const WeatherApp = () => {
   }, []);
 
   // Function to fetch weather data
-  const fetchWeather = async (city) => {
-    try {
+ {/* const fetchWeather = async (location) => {
+     try {
       const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather`, {
         params: {
           q: city,            // City name
@@ -62,12 +86,36 @@ const WeatherApp = () => {
     } catch (err) {
       setError("Failed to fetch weather data. Please try again.");
     }
+  };*/}
+  const fetchWeather = async (location) => {
+    try {
+      let params = {};
+      if (typeof location === "string") {
+        params = { q: location, appid: API_KEY, units: "metric" };
+      } else {
+        const { latitude, longitude } = location;
+        params = { lat: latitude, lon: longitude, appid: API_KEY, units: "metric" };
+      }
+
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather`, { params });
+
+      setWeather(response.data);
+      setError(null); // Clear any errors
+    } catch (err) {
+      setError("Failed to fetch weather data. Please try again.");
+    }
   };
 
+// fetch userlocation on mount
+useEffect (() =>{
+  getuserCurrentLocation();
+}, [])
 
   // Fetch weather when the component mounts or city changes
   useEffect(() => {
+    if (city){
     fetchWeather(city);
+    }
   }, [city]);
 
   const griddisplay = {
@@ -96,12 +144,13 @@ const WeatherApp = () => {
                   weather.weather[0].description === "clear sky" ? sunimage
                     : weather.weather[0].description === "moderate rain" ? sunrain
                     : weather.weather[0].description === "light rain" ? sunrain
-                    : weather.weather[0].description === "overcast clouds" ? graycloud
+                    : weather.weather[0].description === "overcast clouds" ? clouds
                     : weather.weather[0].description === "cloudy" ? clouds 
                     : weather.weather[0].description === "broken clouds" ? clouds
                     : weather.weather[0].description === "smoke" ? graycloud 
                     : weather.weather[0].description === "few clouds" ? clouds 
-                    :weather.weather[0].description === "heavy intensity rain" ? rain : '' // Default image
+                    :weather.weather[0].description === "heavy intensity rain" ? rain 
+                    : clouds // Default image
                 }
                 alt={weather.weather[0].description}
                 className="object-cover"
