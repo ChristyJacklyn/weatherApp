@@ -12,7 +12,7 @@ import graycloud from './assets/graycloud.png';
 const API_KEY = "391fa7134cd19e43ca4a8e51c7f22238"; // Replace with your API key
 
 const WeatherApp = () => {
-  const [city, setCity] = useState(""); // Default city
+  const [city, setCity] = useState("Groningen"); // Default city
   const [weather, setWeather] = useState(null); // To store weather data
   const [error, setError] = useState(null); // To store errors
   const [isMobile, setIsMobile] = useState(false);
@@ -97,7 +97,12 @@ const WeatherApp = () => {
         params = { lat: latitude, lon: longitude, appid: API_KEY, units: "metric" };
       }
 
-      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather`, { params });
+      const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather`, {
+          params: {
+            q: city,            // City name
+            appid: API_KEY,     // Your API key
+            units: "metric", 
+      }});
 
       setWeather(response.data);
       setError(null); // Clear any errors
